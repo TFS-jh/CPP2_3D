@@ -25,11 +25,10 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _EMISSION
   - _OCCLUSIONMAP
   - _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
   m_InvalidKeywords: []
-  m_LightmapFlags: 2
+  m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -118,11 +117,11 @@ Material:
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Metallic: 0
-    - _OcclusionStrength: 0.3
+    - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Smoothness: 0
+    - _Smoothness: 0.44
     - _SmoothnessTextureChannel: 1
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -132,9 +131,9 @@ Material:
     - _XRMotionVectorsPass: 1
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 0.5180367, g: 0.67295593, b: 0.446521, a: 1}
-    - _Color: {r: 0.51803666, g: 0.67295593, b: 0.44652098, a: 1}
-    - _EmissionColor: {r: 0.050314188, g: 0, b: 0.038824677, a: 1}
+    - _BaseColor: {r: 0.6855345, g: 0.31082535, b: 0.06682872, a: 1}
+    - _Color: {r: 0.6855345, g: 0.3108253, b: 0.0668287, a: 1}
+    - _EmissionColor: {r: 0.044025064, g: 0, b: 0.012327022, a: 1}
     - _SpecColor: {r: 0.6603774, g: 0.32603535, b: 0.3817379, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

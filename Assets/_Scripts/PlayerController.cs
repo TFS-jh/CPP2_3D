@@ -3,12 +3,16 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    Rigidbody rb;
     InputSystem_Actions input;
+
     Vector2 movementInput;
 
-    Rigidbody rb;
+    public float speed = 500f;
+    public float jumpHeight = 3f;
+    public int maxJumps = 5;
 
-    public float speed = 50f;
+    private int jumpCount = 0;
 
     private void OnEnable()
     {
@@ -16,7 +20,9 @@ public class PlayerController : MonoBehaviour
 
         input.Player.Move.performed += OnMove;
         input.Player.Move.canceled += OnMove;
-        
+
+        input.Player.Jump.started += OnJump;
+
         input.Enable();
     }
 
@@ -26,6 +32,12 @@ public class PlayerController : MonoBehaviour
 
         input.Player.Move.performed -= OnMove;
         input.Player.Move.canceled -= OnMove;
+        input.Player.Jump.started -= OnJump;
+    }
+
+    private void Start()
+    {
+        rb = GetComponent<Rigidbody>();
     }
 
     void OnMove(UnityEngine.InputSystem.InputAction.CallbackContext context)
@@ -40,9 +52,15 @@ public class PlayerController : MonoBehaviour
         Debug.Log($"Movement Input: {movementInput}");
     }
 
-    private void Start()
+    void OnJump(UnityEngine.InputSystem.InputAction.CallbackContext context)
     {
-        Rigidbody rb = GetComponent<Rigidbody>();
+        if (!rb) return;
+
+        if (jumpCount != maxJumps)
+        {
+            rb.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
+            jumpCount++;
+        }
     }
 
     // Update is called once per frame
@@ -50,8 +68,8 @@ public class PlayerController : MonoBehaviour
     {
         if (!rb) return;
 
-        Vector2 moveWithSpeed = movementInput * 5f * Time.deltaTime;
+        Vector2 moveWithSpeed = movementInput * speed * Time.deltaTime;
 
-        rb.linearVelocity = new Vector3(movementInput.x, rb.linearVelocity.y, movementInput.y);
+        rb.linearVelocity = new Vector3(moveWithSpeed.x, rb.linearVelocity.y, moveWithSpeed.y);
     }
 }

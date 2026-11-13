@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -30,7 +29,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnDisable() 
     { 
-        if (InputManager.Instance != null) 
+        if (InputManager.IsInitialized) 
         { 
             InputManager.Instance.OnMoveEvent -= OnMove; 
             InputManager.Instance.OnJumpEvent -= OnJump;

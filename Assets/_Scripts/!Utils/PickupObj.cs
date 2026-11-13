@@ -13,11 +13,13 @@ public class PickupObj : MonoBehaviour
 
     [SerializeField] private PickupType type;
 
-    private void OnCharacterControllerHit(ControllerColliderHit hit)
+    private void OnTriggerEnter(Collider collision)
     {
-        if (hit.collider.CompareTag("Player"))
+        if (collision.CompareTag("Player"))
         {
-            PlayerController player = hit.collider.GetComponent<PlayerController>();
+            if (GameManager.Instance == null) throw new MissingComponentException("CharacterController component is missing from this GameObject!");
+
+            PlayerController player = collision.GetComponent<PlayerController>();
             switch (type)
             {
                 case PickupType.Star:
@@ -30,16 +32,10 @@ public class PickupObj : MonoBehaviour
                     break;
                 case PickupType.Poison:
                     Debug.Log(" You will die in 5 seconds...");
-                    StartCoroutine(PoisonTimer());
+                    GameManager.Instance.TimeToDie();
                     break;
             }
             Destroy(gameObject);
         }
-    }
-
-    private IEnumerator PoisonTimer()
-    {
-        yield return new WaitForSeconds(5f);
-        GameManager.Instance.QuitGame();
     }
 }

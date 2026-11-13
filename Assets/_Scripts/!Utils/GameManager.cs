@@ -1,20 +1,22 @@
 using UnityEngine;
+using System.Collections;
 
 public class GameManager : Singleton<GameManager>
 {
     public int starCount = 0;
     public int livesCount = 5;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private Coroutine death;
+
+    public IEnumerator PoisonTimer()
     {
-        
+        yield return new WaitForSeconds(5f);
+        QuitGame();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void TimeToDie()
     {
-        
+        if (death == null) death = StartCoroutine(PoisonTimer());
     }
 
     public void QuitGame()

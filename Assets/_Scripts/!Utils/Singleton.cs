@@ -1,6 +1,5 @@
 using UnityEngine;
 using System;
-using UnityEditor;
 
 public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
@@ -12,21 +11,9 @@ public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
         {
             if (_instance == null)
             {
-                try
-                {
-                    _instance = FindAnyObjectByType<T>();
-                    if (_instance == null) 
-                        throw new InvalidOperationException($"No instance of Singleton<{typeof(T).Name}> found in this scene.");
-                }
-                catch (Exception e)
-                {
-                    Debug.Log(e.StackTrace);
-                }
-                finally
-                {
-                    GameManager.Instance.QuitGame();
-                }
-                
+                _instance = FindAnyObjectByType<T>();
+                if (_instance == null) 
+                    throw new InvalidOperationException($"No instance of Singleton<{typeof(T).Name}> found in this scene.");
             }
             return _instance;
         }

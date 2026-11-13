@@ -3,73 +3,108 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    Rigidbody rb;
-    InputSystem_Actions input;
+    private CharacterController cc;
 
-    Vector2 movementInput;
+    [Header("Movement Speed")]
+    [SerializeField] private float movementSpeed = 5f;
 
-    public float speed = 500f;
-    public float jumpHeight = 3f;
-    public int maxJumps = 5;
+    [Header("Jump Settings")]
+    [SerializeField] private float jumpHeight = 3f;
+    [SerializeField] private float timeToJumpApex = 0.4f;
 
-    private int jumpCount = 0;
+    private float gravity;
+    private float initJumpVel;
 
-    private void OnEnable()
+    // Values filled by inputs
+    private Vector2 movementInput;
+    private Vector3 velocity;
+    private bool jumpPressed = false;
+
+    private void OnEnable() 
     {
-        input = new InputSystem_Actions();
-
-        input.Player.Move.performed += OnMove;
-        input.Player.Move.canceled += OnMove;
-
-        input.Player.Jump.started += OnJump;
-
-        input.Enable();
+        if (InputManager.IsInitialized) {
+            InputManager.Instance.OnMoveEvent += OnMove;
+            InputManager.Instance.OnJumpEvent += OnJump;
+        }
     }
 
-    private void OnDisable()
-    {
-        input.Disable();
-
-        input.Player.Move.performed -= OnMove;
-        input.Player.Move.canceled -= OnMove;
-        input.Player.Jump.started -= OnJump;
+    private void OnDisable() 
+    { 
+        if (InputManager.Instance != null) 
+        { 
+            InputManager.Instance.OnMoveEvent -= OnMove; 
+            InputManager.Instance.OnJumpEvent -= OnJump;
+        }
     }
+
+    void OnMove(Vector2 move) => movementInput = move;
+
+    void OnJump(bool isPressed) => jumpPressed = isPressed;
 
     private void Start()
     {
-        rb = GetComponent<Rigidbody>();
-    }
+        cc = GetComponent<CharacterController>();
 
-    void OnMove(UnityEngine.InputSystem.InputAction.CallbackContext context)
-    {
-        if (context.canceled)
+        if (cc == null)
         {
-            movementInput = Vector2.zero;
-            Debug.Log($"Movement Input: 0");
-            return;
+            throw new MissingComponentException("CharacterController component is missing from this GameObject!");
         }
-        movementInput = context.ReadValue<Vector2>();
-        Debug.Log($"Movement Input: {movementInput}");
+
+        CalculateJumpVars();
     }
 
-    void OnJump(UnityEngine.InputSystem.InputAction.CallbackContext context)
-    {
-        if (!rb) return;
+    private void OnValidate() => CalculateJumpVars();
 
-        if (jumpCount != maxJumps)
+    private void CalculateJumpVars()
+    {
+        if (timeToJumpApex <= 0 || float.IsNaN(timeToJumpApex) || float.IsInfinity(timeToJumpApex))
         {
-            rb.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
-            jumpCount++;
+            Debug.LogWarning("timeToJumpApex must be greater than 0 and a valid number. Resetting to default (0.4f)...");
+            timeToJumpApex = 0.4f;
+        }
+
+        if (jumpHeight <= 0 || float.IsNaN(jumpHeight) || float.IsInfinity(jumpHeight))
+        {
+            Debug.LogWarning("jumpHeight must be greater than 0 and a valid number. Resetting to default (5f)...");
+            jumpHeight = 5f;
+        }
+
+        gravity = -(2 * jumpHeight) / Mathf.Pow(timeToJumpApex, 2);
+        initJumpVel = Mathf.Abs(gravity) * timeToJumpApex;
+    }
+
+    // preferred over Update() when dealing with kinematic movement for consistency
+    void FixedUpdate()
+    {
+        UpdatePlayerVelocity();
+        cc.Move(velocity * Time.fixedDeltaTime);
+    }
+
+    void UpdatePlayerVelocity()
+    {
+        // Updates player velocity based on input
+        velocity.x = movementInput.x * movementSpeed;
+        velocity.z = movementInput.y * movementSpeed;
+
+        // Checks if grounded and resets yVel to -skinWidth to keep player grounded
+        if (cc.isGrounded)
+        {
+            velocity.y = -cc.skinWidth;
+            
+            // If jump is pressed, set yVel to to initJumpVel
+            if (jumpPressed)
+            {
+                velocity.y = initJumpVel;
+            }
+        }
+        else // Else apply gravity to yVel
+        {
+            velocity.y += gravity * Time.fixedDeltaTime;
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        if (!rb) return;
 
-        Vector2 moveWithSpeed = movementInput * speed * Time.deltaTime;
-
-        rb.linearVelocity = new Vector3(moveWithSpeed.x, rb.linearVelocity.y, moveWithSpeed.y);
     }
 }

@@ -3,6 +3,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     private CharacterController cc;
+    private Camera mainCamera;
 
     [Header("Movement Speed")]
     [SerializeField] private float movementSpeed = 5f;
@@ -43,11 +44,13 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         cc = GetComponent<CharacterController>();
+        mainCamera = Camera.main;
 
         if (cc == null)
-        {
             throw new MissingComponentException("CharacterController component is missing from this GameObject!");
-        }
+
+        if (mainCamera == null)
+            throw new MissingComponentException("Main Camera cannot be found!");
 
         CalculateJumpVars();
     }
@@ -75,15 +78,33 @@ public class PlayerController : MonoBehaviour
     // preferred over Update() when dealing with kinematic movement for consistency
     void FixedUpdate()
     {
-        UpdatePlayerVelocity();
+        Vector3 projectedMoveDirection = ProjectedMoveDirection();
+        UpdatePlayerVelocity(projectedMoveDirection);
+        UpdatePlayerRotation(projectedMoveDirection);
+
         cc.Move(velocity * Time.fixedDeltaTime);
     }
 
-    void UpdatePlayerVelocity()
+    // Used for adjusting movement with Freelook Cam
+    private Vector3 ProjectedMoveDirection()
+    {
+        Vector3 forward = mainCamera.transform.forward;
+        Vector3 right = mainCamera.transform.right;
+
+        forward.y = 0;
+        right.y = 0;
+
+        forward.Normalize();
+        right.Normalize();
+
+        return forward * movementInput.y + right * movementInput.x;
+    }
+
+    void UpdatePlayerVelocity(Vector3 projectedMoveDirection)
     {
         // Updates player velocity based on input
-        velocity.x = movementInput.x * movementSpeed;
-        velocity.z = movementInput.y * movementSpeed;
+        velocity.x = projectedMoveDirection.x * movementSpeed;
+        velocity.z = projectedMoveDirection.z * movementSpeed;
 
         // Checks if grounded and resets yVel to -skinWidth to keep player grounded
         if (cc.isGrounded)
@@ -102,8 +123,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnControllerColliderHit(ControllerColliderHit hit)
+    void UpdatePlayerRotation(Vector3 projectedMoveDirection)
     {
-
+        if (projectedMoveDirection.sqrMagnitude > 0.01f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(projectedMoveDirection);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 0.2f);
+        }
     }
+
 }

@@ -89,7 +89,7 @@ namespace Unity.Animations.SpringBones
                     typeof(Animator)
                 };
                 springBoneRoot = characterRootComponentTypes
-                    .Select(type => FindObjectOfType(type) as Component)
+                    .Select(type => FindAnyObjectByType(type) as Component)
                     .Where(component => component != null)
                     .Select(component => component.gameObject)
                     .FirstOrDefault();

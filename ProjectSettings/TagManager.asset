@@ -5,11 +5,12 @@ TagManager:
   serializedVersion: 3
   tags:
   - Winner
+  - HealthBar
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Enemies
   - Water
   - UI
   - 

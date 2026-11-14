@@ -1,3 +1,5 @@
+using Unity.Cinemachine;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -132,4 +134,31 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        //Ray newRay = new Ray(transform.position + Vector3.up * 0.5f, transform.forward);
+        //if (Physics.Raycast(newRay, out RaycastHit hit, 30f))
+        //{
+        //    // Debug.Log(hit.collider.name + " gameObject detected in front of player!");
+        //}
+
+        //Debug.DrawRay(newRay.origin, newRay.direction * 30, Color.red);
+    }
+
+
+    // Useful for detecting what objects the player collides with
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        Debug.Log("Player has hit: " +  hit.transform.gameObject.name);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("Player entered trigger: " + other.transform.gameObject.name);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("Player entered collision: " + collision.gameObject.name);
+    }
 }

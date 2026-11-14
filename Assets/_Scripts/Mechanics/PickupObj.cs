@@ -27,8 +27,8 @@ public class PickupObj : MonoBehaviour
                     GameManager.Instance.starCount++;
                     break;
                 case PickupType.OneUp:
-                    Debug.Log("1UP collected!");
-                    GameManager.Instance.livesCount++;
+                    Debug.Log("Health collected!");
+                    GameManager.Instance.currHealth += 50;
                     break;
                 case PickupType.Poison:
                     Debug.Log(" You will die in 5 seconds...");

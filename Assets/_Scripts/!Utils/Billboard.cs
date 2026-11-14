@@ -4,7 +4,7 @@ public abstract class Billboard<T> : MonoBehaviour where T : MonoBehaviour
 {
     public Transform target;
 
-    void Update()
+    protected virtual void LateUpdate()
     {
         if (target != null)
             transform.LookAt(target);

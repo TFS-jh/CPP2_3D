@@ -1,29 +1,24 @@
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class HealthBar : Billboard<HealthBar>
 {
-    [SerializeField] private int maxHealth = 150;
-    private int currHealth = 150;
+    [SerializeField] private Image healthImage;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        if (GameManager.Instance == null)
+            throw new MissingComponentException("GameManager instance cannot be found!");
+
+        if (healthImage == null)
+            throw new MissingComponentException("healthImage cannot be found!");
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (currHealth > maxHealth)
-        {
-            currHealth = maxHealth;
-            Debug.Log("Max Health cannot be exceeded!");
-        }
+        float fillValue = (float)GameManager.Instance.currHealth / GameManager.Instance.maxHealth;
 
-        if (currHealth < 0)
-        {
-            currHealth = 0;
-            Debug.Log("currHealth cannot go below 0!");
-        }
+        healthImage.fillAmount = Mathf.Clamp01(fillValue);
     }
 }

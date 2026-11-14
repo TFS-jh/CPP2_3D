@@ -3,7 +3,10 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using Unity.Animations.SpringBones.GameObjectExtensions;
+#if UNITY_EDITOR
+using UnityEditor.Localization;
 using UnityEditor.Localization.Editor;
+#endif
 
 namespace Unity.Animations.SpringBones
 {

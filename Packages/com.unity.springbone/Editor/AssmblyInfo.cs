@@ -1,3 +1,4 @@
-﻿using UnityEditor.Localization.Editor;
- 
-[assembly: UnityEditor.Localization]
+﻿#if UNITY_EDITOR
+using UnityEditor.Localization;
+using UnityEditor.Localization.Editor;
+#endif

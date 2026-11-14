@@ -1,7 +1,10 @@
 ﻿using System.Linq;
 using UnityEditor;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor.Localization;
 using UnityEditor.Localization.Editor;
+#endif
 
 namespace Unity.Animations.SpringBones
 {

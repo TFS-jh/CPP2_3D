@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections;
+#if UNITY_EDITOR
 using UnityEditor.Localization;
+#endif
 
 public class GameManager : Singleton<GameManager>
 {
